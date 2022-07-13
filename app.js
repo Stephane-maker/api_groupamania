@@ -1,7 +1,8 @@
 const express = require("express");
 
 const mongoose = require("mongoose");
-const connexionUser = require("./router/user")
+const connexionUser = require("./router/user");
+const generalPost = require("./router/post");
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", connexionUser);
+app.use("/api/", generalPost)
 
 module.exports = app;
