@@ -36,10 +36,41 @@ postman user
 
  -----
 
- ## A venir
+## Post 
+ Postman post
 
- 1) Mettre en place systeme de Post
- 2) Affichage des Post 
+- crée un post: "/createdPost"
+```
+{
+    "post" : "first post with postman"
+}
+```
+- affiché tout les post : "/allPost" 
+```
+postman agent 
+url: "/api/allPost
+method: get
+```
+
+- Modifié un post : "/:id/modifyPost"
+
+```
+{
+    "post": "You new post"
+}
+```
+
+- Supprimé un post : "/:id/deletePost"
+```
+postman agent
+url: "/api/:id/deletePost"
+method: post
+``` 
+
+L'argument "post" est impose par le Schema si il est manquant l'API retournera automatiquement une erruer
+-
+
+ ## A venir
  3) Modification suivant l'user qui as poster le Post
  4) Photo de profil 
  5) Modification est suppression photo de profil 
