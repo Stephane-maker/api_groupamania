@@ -9,7 +9,7 @@ git clone
 npm install
 ```
 ```
-npm start
+nodemon server
 ```
 ------
 ## Usage User
@@ -52,6 +52,14 @@ url: "/api/allPost
 method: get
 ```
 
+- affiché un post : "/allPost/:id"
+
+```
+postman agent 
+url: "/api/allPost/:id
+method: get
+```
+
 - Modifié un post : "/:id/modifyPost"
 
 ```
@@ -71,9 +79,9 @@ L'argument "post" est impose par le Schema si il est manquant l'API retournera a
 -
 
  ## A venir
- 3) Modification suivant l'user qui as poster le Post
- 4) Photo de profil 
- 5) Modification est suppression photo de profil 
- 6) Image dans les Post 
- 7) Page avec les Discution instantanée 
- 8) suppression des message envoye dans la Discution instantanée 
+ 1) Modification suivant l'user qui as poster le Post
+ 2) Photo de profil 
+ 3) Modification est suppression photo de profil 
+ 4) Image dans les Post 
+ 5) Page avec les Discution instantanée 
+ 6) suppression des message envoye dans la Discution instantanée 
