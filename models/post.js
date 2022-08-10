@@ -5,7 +5,7 @@ const schemaPost = mongoose.Schema({
     post: { type: String, required: true },
     // commentaire: {type: String},
     // userLike: [String],
-    // like: {type: Number}
+    // like: { type: Number }
 });
 
 module.exports = mongoose.model("Post", schemaPost)
