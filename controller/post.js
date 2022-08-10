@@ -11,8 +11,8 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.OnePost = (req, res, next) => {
-    Post.find({ _id: req.params.id })
-        .then((post) => res.status(200).json({ post }))
+    Post.findOne({ _id: req.params.id })
+        .then((post) => res.status(200).json(post))
         .catch(error => res.status(500).json({ error: "Internal Server Error" }));
 }
 
