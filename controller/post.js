@@ -4,13 +4,16 @@ const Post = require("../models/post");
 exports.createPost = (req, res, next) => {
     const post = new Post({
         ...req.body
+
     });
+    console.log(req.body)
     post.save()
         .then(() => res.status(201).json({ message: 'Post has been successfully created' }))
         .catch(error => res.status(400).json({ error: "missing required fields" }));
 };
 
 exports.OnePost = (req, res, next) => {
+
     Post.findOne({ _id: req.params.id })
         .then((post) => res.status(200).json(post))
         .catch(error => res.status(500).json({ error: "Internal Server Error" }));
@@ -19,6 +22,7 @@ exports.OnePost = (req, res, next) => {
 exports.allPost = (req, res, next) => {
     Post.find()
         .then(post => {
+            console.log(req.auth.userId)
             return res.status(200).json(post);
         })
         .catch(error => res.status(400).json({ error }));

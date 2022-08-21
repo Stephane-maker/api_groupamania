@@ -10,11 +10,11 @@ exports.createUser = (req, res, next) => {
                 password: hash,
             });
             user.save()
-                .then(() => res.status(201).json({ message: 'utilisateur crée!' }))
-                .catch((error) => res.status(400).json({ error }))
+                .then(() => res.status(201).json('utilisateur crée!'))
+                .catch(() => res.status(400).json({ error: "email deja attribué" }))
         })
 
-    .catch((error) => res.status(400).json({ error }));
+    .catch(() => res.status(400).json({ error: "email deja attribué" }))
 }
 
 exports.connexionUser = (req, res, next) => {

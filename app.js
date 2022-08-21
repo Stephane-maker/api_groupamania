@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const connexionUser = require("./router/user");
 const generalPost = require("./router/post");
+const path = require("path")
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
-
+app.use("/image", express.static(path.join(__dirname, "image")));
 app.use("/api/auth", connexionUser);
 app.use("/api/", generalPost)
 
