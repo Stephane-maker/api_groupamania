@@ -7,6 +7,7 @@ const path = require("path")
 
 const app = express();
 
+
 app.use(express.json());
 
 mongoose.connect("mongodb+srv://admin:WaTW7M49WJZk9Nzm@cluster0.v51i2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {

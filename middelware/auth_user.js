@@ -6,7 +6,6 @@ module.exports = (req, res, next) => {
         const decodedToken = jsonWebToken.verify(token, "RANDOM_TOKEN_SECRET");
         const userId = decodedToken.userId;
 
-
         req.auth = { userId };
 
         if (req.body.userId && req.body.userId !== userId) {
