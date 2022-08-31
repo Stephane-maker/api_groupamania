@@ -1,6 +1,7 @@
 const multer = require("multer");
-const auth = require("./auth_user");
+
 const fs = require("fs")
+const crypto = require('crypto');
 
 const MIME_TYPES = {
     "image/jpg": "jpg",
@@ -11,10 +12,10 @@ const MIME_TYPES = {
 }
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        if (!fs.existsSync("image/post/" + req.auth.userId)) {
-            fs.mkdirSync("image/post/" + req.auth.userId);
+        if (!fs.existsSync(`image/post/${req.auth.userId}`)) {
+            fs.mkdirSync(`image/post/${req.auth.userId}`);
         }
-        callback(null, "image/post/" + req.auth.userId)
+        callback(null, `image/post/${req.auth.userId}`)
     },
     filename: (req, file, callback) => {
         const name = file.originalname.split(" ").join("_");

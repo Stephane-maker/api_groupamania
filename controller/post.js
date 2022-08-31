@@ -1,8 +1,9 @@
 const Post = require("../models/post");
 const fs = require("fs");
+
 exports.createPost = (req, res, next) => {
-    console.log(req.body)
-    if (req.file) {
+
+    if (req.file && req.body.post != "") {
         const postWithImage = new Post({
             ...req.body,
             post: req.body.post,
@@ -12,7 +13,8 @@ exports.createPost = (req, res, next) => {
         postWithImage.save()
             .then(() => res.status(201).json({ message: 'Post has been successfully created' }))
             .catch(error => res.status(400).json({ error: "missing required fields" }));
-    } else {
+    }
+    if (!req.file && req.body.post != "") {
         const justPost = new Post({
             ...req.body,
             post: req.body.post,
@@ -21,6 +23,19 @@ exports.createPost = (req, res, next) => {
         justPost.save()
             .then(() => res.status(201).json({ message: 'Post has been successfully created' }))
             .catch(error => res.status(500).json({ error: "Internal error please try again later" }));
+    }
+    if (req.file && req.body.post === "") {
+        if (fs.existsSync(`image/post/${req.auth.userId}`)) {
+            const filename = req.file.filename;
+            console.log(filename)
+            fs.unlink(`image/post/${req.auth.userId}/${filename}`, (err) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.log(`image/post/${filename}` + " " + "Deleted")
+            })
+        }
+        return res.status(400).json({ error: "missing element" })
     }
 };
 
@@ -53,20 +68,18 @@ exports.modifyPost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
     Post.findOne({ _id: req.params.id })
-        .then((post) => {
-            if (post.ImageUrl) {
-                if (fs.existsSync("image/post/" + req.auth.userId)) {
-                    const filename = post.ImageUrl.split("/image/post/")[1];
-                    fs.unlink(`image/post/${filename}`, () => {
-                        Post.deleteOne({ id: req.params.id })
-                            .then(res.status(201).json({ message: "the post has been deleted" }))
-                            .catch((error) => res.status(500).json({ error: "you do not have permission to perform this action" }))
-                    })
-                }
+        .then(post => {
+            if (req.body.ImageUrl) {
+                const filename = post.ImageUrl.split(`/image/post/${req.auth.userId}`)[1];
+                fs.unlink(`image/post/${req.auth.userId}/${filename}`, () => {
+                    Post.deleteOne({ _id: req.params.id })
+                        .then(() => res.status(200).json({ message: "Object deleted" }))
+                        .catch((error) => res.status(400).json({ error }))
+                })
             } else {
-                Post.deleteOne({ id: req.params.id })
-                    .then(res.status(201).json({ message: "the post has been deleted" }))
-                    .catch((error) => res.status(500).json({ error: "you do not have permission to perform this action" }))
+                Post.deleteOne({ _id: req.params.id })
+                    .then(() => res.status(200).json({ message: "Object deleted" }))
+                    .catch((error) => res.status(400).json({ error }))
             }
         })
 }

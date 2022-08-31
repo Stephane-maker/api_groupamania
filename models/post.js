@@ -6,7 +6,7 @@ const schemaPost = mongoose.Schema({
     post: { type: String, required: true },
     userIdPoster: { type: String, require: true },
     ImageUrl: { type: String, require: false },
-    // commentaire: {type: String},
+    commentaire: [{ type: String }],
     // userLike: [String],
     // like: { type: Number }
 });
