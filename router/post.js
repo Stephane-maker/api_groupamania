@@ -10,6 +10,6 @@ router.post("/createdPost", TokenUser, multer, generalPost.createPost);
 router.get("/allPost", TokenUser, generalPost.allPost);
 router.get("/allPost/:id", TokenUser, generalPost.OnePost);
 router.post("/:id/modifyPost", TokenUser, generalPost.modifyPost);
-router.post("/:id/deletePost", TokenUser, generalPost.deletePost);
+router.post("/deletePost/:id", TokenUser, generalPost.deletePost);
 
 module.exports = router;
