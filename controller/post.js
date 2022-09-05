@@ -59,10 +59,28 @@ exports.modifyPost = (req, res, next) => {
             const postObject = req.file ? {
                 ...req.body
             } : {...req.body };
-
-            Post.updateOne({ _id: req.params.id }, {...postObject, _id: req.params.id })
-                .then(() => res.status(201).json({ message: "The post has been edited" }))
-                .catch(() => res.status(500).json({ error: "you do not have permission to perform this action" }))
+            if (req.file) {
+                const filename = post.ImageUrl.split("/")[6]
+                console.log(fs.existsSync(`image/post/${req.auth.userId}/${filename}`))
+                fs.unlink(`image/post/${req.auth.userId}/${filename}`, (err) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                    console.log(`image/post/${req.auth.userId}/${filename}` + " " + "Deleted")
+                })
+                const postObject = req.file ? {
+                    ...req.body,
+                    ImageUrl: `${req.protocol}://${req.get('host')}/image/post/${req.auth.userId}/${req.file.filename}`
+                } : {...req.body };
+                Post.updateOne({ _id: req.params.id }, {...postObject, _id: req.params.id })
+                    .then(() => res.status(201).json({ message: "The post has been edited" }))
+                    .catch(() => res.status(500).json({ error: "you do not have permission to perform this action" }))
+            }
+            if (!req.file && req.body.post != "") {
+                Post.updateOne({ _id: req.params.id }, {...postObject, _id: req.params.id })
+                    .then(() => res.status(201).json({ message: "The post has been edited" }))
+                    .catch(() => res.status(500).json({ error: "you do not have permission to perform this action" }))
+            }
         })
 }
 
