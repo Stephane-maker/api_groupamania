@@ -53,14 +53,20 @@ exports.allPost = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 }
 
+exports.userPost = (req, res, next) => {
+    Post.find({ userIdPoster: req.auth.userId })
+        .then((post) => {
+            return res.status(201).json(post)
+        })
+        .catch(error => res.status(400).json({ error }));
+}
+
 exports.modifyPost = (req, res, next) => {
     Post.findOne({ _id: req.params.id })
         .then((post) => {
-            const postObject = req.file ? {
-                ...req.body
-            } : {...req.body };
-            if (req.file) {
+            if (req.file && post.ImageUrl) {
                 const filename = post.ImageUrl.split("/")[6]
+                console.log(filename)
                 console.log(fs.existsSync(`image/post/${req.auth.userId}/${filename}`))
                 fs.unlink(`image/post/${req.auth.userId}/${filename}`, (err) => {
                     if (err) {
@@ -81,13 +87,23 @@ exports.modifyPost = (req, res, next) => {
                     .then(() => res.status(201).json({ message: "The post has been edited" }))
                     .catch(() => res.status(500).json({ error: "you do not have permission to perform this action" }))
             }
+            if (req.file && !post.ImageUrl) {
+                const postObject = req.file ? {
+                    ...req.body,
+                    ImageUrl: `${req.protocol}://${req.get('host')}/image/post/${req.auth.userId}/${req.file.filename}`
+                } : {...req.body };
+                Post.updateOne({ _id: req.params.id }, {...postObject, _id: req.params.id })
+                    .then(() => res.status(201).json({ message: "The post has been edited" }))
+                    .catch(() => res.status(500).json({ error: "you do not have permission to perform this action" }))
+                console.log(req.file)
+            }
         })
 }
 
 exports.deletePost = (req, res, next) => {
     Post.findOne({ _id: req.params.id })
         .then(post => {
-            if (req.body.ImageUrl) {
+            if (post.ImageUrl) {
                 const filename = post.ImageUrl.split(`/image/post/${req.auth.userId}`)[1];
                 fs.unlink(`image/post/${req.auth.userId}/${filename}`, () => {
                     Post.deleteOne({ _id: req.params.id })
