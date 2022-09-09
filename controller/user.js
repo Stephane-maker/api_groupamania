@@ -5,17 +5,21 @@ const User = require("../models/user");
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
-            const user = new User({
-                email: req.body.email,
-                password: hash,
-                adminRight: false
-            });
-            user.save()
-                .then(() => res.status(201).json('utilisateur crée!'))
-                .catch(() => res.status(400).json({ error: "email deja attribué" }))
+            console.log(req.body)
+            if (req.body.email === req.body.confirmEmail && req.body.password === req.body.confirmPassword) {
+                const user = new User({
+                    email: req.body.email,
+                    password: hash,
+                    adminRight: false
+                });
+                user.save()
+                    .then(() => res.status(201).json('utilisateur crée!'))
+                    .catch(() => res.status(400).json({ error: "email deja attribué" }))
+            } else {
+                return res.status(500).json({ error: "Soit vos email ne corresponde pas soit les mot de passe ne corresponde pas ou il manque des caractere obligatoire" })
+            }
         })
-
-    .catch(() => res.status(400).json({ error: "email deja attribué" }))
+        .catch(() => res.status(400).json({ error: "email deja attribué" }))
 }
 
 exports.connexionUser = (req, res, next) => {
