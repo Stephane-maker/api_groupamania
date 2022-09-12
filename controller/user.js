@@ -4,22 +4,23 @@ const User = require("../models/user");
 
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
-        .then(hash => {
-            console.log(req.body)
-            if (req.body.email === req.body.confirmEmail && req.body.password === req.body.confirmPassword) {
-                const user = new User({
-                    email: req.body.email,
-                    password: hash,
-                    adminRight: false
-                });
-                user.save()
-                    .then(() => res.status(201).json('utilisateur crée!'))
-                    .catch(() => res.status(400).json({ error: "email deja attribué" }))
-            } else {
-                return res.status(500).json({ error: "Soit vos email ne corresponde pas soit les mot de passe ne corresponde pas ou il manque des caractere obligatoire" })
-            }
-        })
-        .catch(() => res.status(400).json({ error: "email deja attribué" }))
+
+    .then(hash => {
+        if (req.body.email != req.body.confirmEmail) {
+            return res.status(400).json({ message: "Les champs email ne correspondent pas" });
+        }
+        if (req.body.password != req.body.confirmPassword) {
+            return res.status(400).json({ message: "Les champs mot de passe ne correspondent pas" });
+        } else {
+            const user = new User({
+                email: req.body.email,
+                password: hash,
+            });
+            user.save()
+                .then(() => res.status(201).json({ message: 'utilisateur crée!' }))
+                .catch((message) => res.status(400).json({ message: "email deja utilisé" }));
+        }
+    })
 }
 
 exports.connexionUser = (req, res, next) => {
@@ -33,6 +34,7 @@ exports.connexionUser = (req, res, next) => {
                     if (!valid) {
                         return res.status(401).json({ message: "mot de passe incorrecte" })
                     }
+                    console.log(user)
                     res.status(201).json({
                         message: "you are connected",
                         userId: user._id,
