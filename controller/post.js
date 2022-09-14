@@ -67,7 +67,7 @@ exports.OnePost = (req, res, next) => {
 exports.allPost = (req, res, next) => {
     Post.find()
         .then((post) => {
-            console.log(req.body)
+
             if (post.length === 0) {
                 const array = [{ message: "Aucun post pour le moment " }]
                 return res.status(200).json(array);
@@ -99,21 +99,12 @@ exports.modifyPost = (req, res, next) => {
                             ...req.body,
                             ImageUrl: `${req.protocol}://${req.get('host')}/image/post/${req.auth.userId}/${req.file.filename}`
                         } : {...req.body };
-                        const userIdFolder = post.ImageUrl.split('/')[5]
-                        const filename = post.ImageUrl.split('/')[6]
-                        if (userIdFolder != req.auth.userId) {
-                            fs.unlink(`image/post/${userIdFolder}/${filename}`, (err) => {
-                                if (err) {
-                                    console.log(err)
-                                }
-                                return true
-                            })
-                        }
                         if (user.id === post.userIdPoster || user.adminRight === true) {
                             if (req.file && post.ImageUrl) {
-                                const filename = post.ImageUrl.split("/")[6]
+                                const filename = post.ImageUrl.split("/")[6];
+                                const file = post.ImageUrl.split("/")[5]
 
-                                fs.unlink(`image/post/${req.auth.userId}/${filename}`, (err) => {
+                                fs.unlink(`image/post/${file}/${filename}`, (err) => {
                                     if (err) {
                                         console.log(err)
                                     }
@@ -180,7 +171,7 @@ exports.LikePost = (req, res, next) => {
         .then((post) => {
             user.findOne({ _id: req.auth.userId })
                 .then((user) => {
-                    console.log(user)
+
                     if (user) {
                         if (req.body.idUser === req.auth.userId) {
                             if (!post.like.includes(req.auth.userId)) {
