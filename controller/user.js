@@ -6,19 +6,17 @@ exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
 
     .then(hash => {
-        if (req.body.email != req.body.confirmEmail) {
-            return res.status(400).json({ message: "Les champs email ne correspondent pas" });
-        }
         if (req.body.password != req.body.confirmPassword) {
             return res.status(400).json({ message: "Les champs mot de passe ne correspondent pas" });
         } else {
             const user = new User({
                 email: req.body.email,
                 password: hash,
+                adminRight: false
             });
             user.save()
                 .then(() => res.status(201).json({ message: 'utilisateur crée!' }))
-                .catch((message) => res.status(400).json({ message: "email deja utilisé" }));
+                .catch((message) => res.status(400).json({ message: "Internal error as occured (" + message + ")" }));
         }
     })
 }
@@ -34,7 +32,6 @@ exports.connexionUser = (req, res, next) => {
                     if (!valid) {
                         return res.status(401).json({ message: "mot de passe incorrecte" })
                     }
-                    console.log(user)
                     res.status(201).json({
                         message: "you are connected",
                         userId: user._id,
